@@ -1,10 +1,32 @@
-from space_network_lib import SpaceEntity, Packet,SpaceNetwork
+from space_network_lib import SpaceEntity, Packet,SpaceNetwork,TemporalInterferenceError,DataCorruptedError
+from time import sleep
 class Satellite(SpaceEntity):
     def receive_signal(self, packet: Packet):
         print(f"[{self.name}]  Received: {packet}.")
-network = SpaceNetwork()
+network = SpaceNetwork(level=2)
 sat1 = Satellite("sat1",100)
 sat2 = Satellite("sat2",200)        
 massage = Packet("The satellite is excellent.",sat1,sat2)
-network.send(massage)
-    
+
+
+def transmission_attempt(packet):
+    status = True
+    while status == True:
+        try:
+            network.send(packet)
+            status = False
+        except TemporalInterferenceError:
+            print("waiting ,Interference...")
+            sleep(2)
+          
+        except DataCorruptedError:
+            print("Data retrying ,corrupted...")
+
+
+transmission_attempt(massage)        
+
+
+            
+
+
+
