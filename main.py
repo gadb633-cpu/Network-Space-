@@ -39,15 +39,17 @@ def transmission_attempt(packet):
             raise BrokenConnectionError("link lost")
         except OutOfRangeError:
             raise BrokenConnectionError("Target out of range")
- 
-   
 
-network = SpaceNetwork(level=4)
+network = SpaceNetwork(level=5)
 sat1 = Satellite("sat1",100)
-sat2 = Satellite("sat2",200)   
-earth = Earth("earth1",0)     
-p_final= Packet("hello from earth!!!",sat1,sat2)
-p_earth_to_sat1 = RelayPacket(p_final,earth,sat1)
+sat2 = Satellite("sat2",200)
+sat3 = Satellite("sat3",300)
+sat4 = Satellite("sat4",400)
+earth = Earth("earth",0)     
+p_final= Packet("hello from earth!!!",sat3,sat4)
+p_sat2_to_sat3 = RelayPacket(p_final,sat2,sat3)
+p_sat1_to_sat2 = RelayPacket(p_sat2_to_sat3,sat1,sat2)
+p_earth_to_sat1 = RelayPacket(p_sat1_to_sat2,earth,sat1)
 
 try:
     transmission_attempt(p_earth_to_sat1)
